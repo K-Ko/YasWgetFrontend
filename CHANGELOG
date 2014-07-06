@@ -1,3 +1,8 @@
+ v1.1.0
+========
+- Add favicon.ico
+- Hide processes and files sections if empty
+
  v1.0.0
 ========
 - Initial release

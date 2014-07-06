@@ -9,7 +9,7 @@
  */
 
 define('APPNAME',    'Yet another simple Wget frontend');
-define('APPVERSION', '1.1.0');
+define('APPVERSION', '1.1.1');
 
 ini_set('display_errors', 0);
 error_reporting(0);
@@ -66,7 +66,7 @@ echo '
         input[type=text] { padding: 5px }
         hr { height: 0; border-top: dashed gray 1px }
         /* Adjust fixed width output */
-        tt, pre { font-size: 120% }
+        tt, pre { font-size: 110% }
         /* Processes table */
         #processes { width: 100% }
         #processes th, #processes td { padding: .25em 1em .25em 0 }
@@ -198,6 +198,7 @@ if (!empty($files)) {
 </tr>'.PHP_EOL;
 
     foreach ($files as $file) {
+        unset($last);
         exec('sed -e "s~\r~\n~g" '.$file.' | tail -n 1 ', $last);
         printf($tr, urlencode(basename($file)), basename($file), $last[0]);
     }

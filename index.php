@@ -9,7 +9,7 @@
  */
 
 define('APPNAME',    'Yet another simple Wget frontend');
-define('APPVERSION', '1.0.0');
+define('APPVERSION', '1.1.0');
 
 ini_set('display_errors', 0);
 error_reporting(0);
@@ -72,7 +72,7 @@ echo '
         #processes th, #processes td { padding: .25em 1em .25em 0 }
         #processes th { text-align: left }
         #processes td { font-family: monospace, font-size: 120% }
-        #add td { padding: .5em 2em .5em 0 }
+        #add td { padding: .5em 1em .5em 0 }
     </style>
 </head>
 <body>
@@ -164,9 +164,14 @@ if (!empty($ps)) {
                  '<tt>'.$args[2].'</tt></p>';
         }
     }
+    echo '<hr />';
 }
 
-echo '
+$files = glob(LOG_DIR.DS.'*');
+
+if (!empty($files)) {
+
+  echo '
 <!-- Files list -->
 <h2>Files</h2>
 
@@ -180,7 +185,7 @@ echo '
 </thead>
 <tbody>';
 
-$tr = '
+  $tr = '
 <tr>
     <td><a href="/?get=%1$s" title="Download">%2$s</a></td>
     <td><pre>%3$s</pre></td>
@@ -192,16 +197,21 @@ $tr = '
     </td>
 </tr>'.PHP_EOL;
 
-foreach (glob(LOG_DIR.DS.'*') as $file) {
-    exec('sed -e "s~\r~\n~g" '.$file.' | tail -n 1 ', $last);
-    printf($tr, urlencode(basename($file)), basename($file), $last[0]);
+    foreach ($files as $file) {
+        exec('sed -e "s~\r~\n~g" '.$file.' | tail -n 1 ', $last);
+        printf($tr, urlencode(basename($file)), basename($file), $last[0]);
+    }
+
+    echo '
+</tbody></table>
+
+<p><div style="text-align:center"><form><input type="submit" value="Reload page"></form></div></p>
+
+<hr />';
+
 }
 
 echo '
-</tbody></table>
-
-<p><form><input type="submit" value="Reload page"></form></p>
-
 <!-- Add file form -->
 <h2>Add file to queue</h2>
 
@@ -214,14 +224,14 @@ echo '
     <td><small>(required)</small></td>
 </tr>
 <tr>
-    <td>File name:</td>
+    <td>Target file name:</td>
     <td><input type="text" name="name" size="60"</td>
     <td></td>
 </tr>
 <tr>
     <td>Limit download speed:</td>
     <td>
-        <input type="text" name="limit" size="5"><br />
+        <input type="text" name="limit" size="5">
         <small>Amount may be expressed in bytes, kilobytes with the "k" suffix, or megabytes with the "m" suffix.</small>
     </td>
     <td></td>

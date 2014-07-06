@@ -9,7 +9,7 @@
  */
 
 define('APPNAME',    'Yet another simple Wget frontend');
-define('APPVERSION', '1.1.0');
+define('APPVERSION', '1.1.1');
 
 ini_set('display_errors', 0);
 error_reporting(0);

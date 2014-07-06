@@ -59,8 +59,11 @@ echo '
     <title>',APPNAME,' v',APPVERSION,'</title>
     <style>
         body { font-family: Verdana, Helvetia, sans-serif; font-size: 1em; max-width: 1200px; margin:0 auto }
+        a { text-decoration: none }
+        a:link, a:visited, a:focus, a:hover, a:active { color: rgb(204, 102, 17) }
+        a:hover, a:active { text-decoration: underline }
         h1 { font-size: 125% }
-        h2 { font-size: 115% }
+        h2 { font-size: 110% }
         form { display: inline }
         input { font-size: 1em }
         input[type=text] { padding: 5px }
@@ -79,7 +82,9 @@ echo '
 
 <!-- Header -->
 <form style="float:right;text-align:right">
-    <input style="text-align:right" type="text" name="refresh" value="'.($_SESSION['refresh'] ?: 10).'" size="1">s
+    <small>
+        <input style="text-align:right" type="text" name="refresh" value="'.($_SESSION['refresh'] ?: 10).'" size="1">s
+    </small>
     <input type="submit" value="Auto refresh">
     <input type="submit" name="off" value="Stop">
 </form>
@@ -132,19 +137,25 @@ if (isset($_GET['get'])) {
             $parsed = parse_url($_POST['url']);
             $name = basename($parsed['path']);
         }
+
         $url   = escapeshellarg($_POST['url']);
         $file  = escapeshellarg(FILES_DIR.DS.$name);
         $log   = escapeshellarg(LOG_DIR.DS.$name);
+
         $cmd   = $wget.' '.$wget_options
                . (!empty($_POST['limit']) ? ' --limit-rate='.$_POST['limit'] : '')
+                 // Default setting always needed:
                . ' --background --random-wait --progress=bar:force '
+                 // Files and URL
                . ' -O '.$file.' -o '.$log.' '.$url;
 
         #echo '<p>Run: '.$cmd.'</p><hr />';
         exec($cmd);
-        Header('Location: '.$_SERVER['DOCUMENT_URI']);
-        exit;
     }
+
+    // Always reload page after POST
+    Header('Location: '.$_SERVER['DOCUMENT_URI']);
+    exit;
 }
 
 /**
@@ -185,9 +196,10 @@ if (!empty($files)) {
 </thead>
 <tbody>';
 
-  $tr = '
+    // Files table row template
+    $tr = '
 <tr>
-    <td><a href="/?get=%1$s" title="Download">%2$s</a></td>
+    <td><a href="'.$_SERVER['DOCUMENT_URI'].'?get=%1$s" title="Download">%2$s</a></td>
     <td><pre>%3$s</pre></td>
     <td>
         <form method="post">
@@ -212,44 +224,46 @@ if (!empty($files)) {
 
 }
 
-echo '
+?>
 <!-- Add file form -->
 <h2>Add file to queue</h2>
 
 <form method="post">
 
-<table id="add">
-<tr>
-    <td>URL: </td>
-    <td><input type="text" name="url" size="120" required="required"></td>
-    <td><small>(required)</small></td>
-</tr>
-<tr>
-    <td>Target file name:</td>
-    <td><input type="text" name="name" size="60"</td>
-    <td></td>
-</tr>
-<tr>
-    <td>Limit download speed:</td>
-    <td>
-        <input type="text" name="limit" size="5">
-        <small>Amount may be expressed in bytes, kilobytes with the "k" suffix, or megabytes with the "m" suffix.</small>
-    </td>
-    <td></td>
-</tr>
-<tr>
-    <td></td>
-    <td><input type="submit" value="Start"></td>
-    <td></td>
-</tr>
-</table>
+    <table id="add">
+    <tbody>
+        <tr>
+            <td>URL: </td>
+            <td><input type="text" name="url" size="120" required="required" placeholder="http://..."></td>
+            <td><small>(required)</small></td>
+        </tr>
+        <tr>
+            <td>Target file name:</td>
+            <td><input type="text" name="name" size="60" placeholder="optional, get from URL by default"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Limit download speed:</td>
+            <td>
+                <input type="text" name="limit" size="5" placeholder="100k">
+                <small>(Amount may be expressed in bytes, kilobytes with the "k" suffix, or megabytes with the "m" suffix.)</small>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="       Start       "></td>
+            <td></td>
+        </tr>
+    </tbody>
+    </table>
 
 </form>
 
 <!-- Footer -->
 <hr />
-
-<small><a href="https://github.com/K-Ko/YasWgetFrontend">'.APPNAME.' (v'.APPVERSION.') on GitHub</a></small>
+<small>
+    <a href="https://github.com/K-Ko/YasWgetFrontend"><?php echo APPNAME, ' (v', APPVERSION, ')'; ?> on GitHub</a>
+</small>
 </body>
 </html>
-';

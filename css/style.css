@@ -1,0 +1,81 @@
+body {
+  font-family: Verdana, Helvetia, sans-serif;
+  font-size: 90%;
+  max-width: 1200px;
+  margin: 0 auto
+}
+
+#header, #footer {
+  padding: .2em .2em .2em 1em
+}
+
+#header {
+  margin-top: .25em;
+  height: 2.4em
+}
+
+#header h1 {
+  font-size: 140%;
+  margin: .2em 0 0 0
+}
+
+#footer {
+  height: 1.3em
+}
+
+a {
+  text-decoration: none
+}
+
+a:hover, a:active {
+  text-decoration: underline
+}
+
+fieldset {
+  margin: .75em 0
+}
+
+legend {
+  padding: .5em .75em;
+  font-weight: bold !important
+}
+
+img {
+  border: 0;
+  vertical-align: middle
+}
+
+form {
+  display: inline
+}
+
+input {
+  font-size: 1em
+}
+
+input[type=text] {
+  padding: 5px
+}
+
+hr {
+  height: 0;
+  border-top: dashed gray 1px
+}
+
+/* Tables */
+.list {
+  width: 100%
+}
+
+.list td {
+  padding-right: 1em
+}
+
+#add td {
+  padding: .5em .5em .5em .75em
+}
+
+tr.odd {
+    background-color: #E0E0E0;
+}
+

@@ -27,5 +27,5 @@ Protect your installation, at least with a basic authentication!
 ####Optional
 Copy default settings file if needed and adjust them for your needs.
 
-    # cp config.default.php config.php
-    # editor config.php
+    # cp config.default.php config.local.php
+    # editor config.local.php

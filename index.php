@@ -21,7 +21,6 @@ define('DS', DIRECTORY_SEPARATOR);
 /**
  * Load settings
  */
-
 include 'config'.DS.'config.default.php';
 // Custom settings?!
 if (file_exists('config'.DS.'config.php')) include 'config'.DS.'config.local.php';
@@ -55,7 +54,7 @@ $files = glob(LOG_DIR.DS.'*');
 
 // Purge orphan log files
 foreach ($files as $id=>$file) {
-    if (!(file_exists(FILES_DIR.DS.basename($file)) || file_exists(FILES_DIR.DS.basename($file).TEMP_EXT))) {
+    if (!(file_exists(FILES_DIR.DS.basename($file)) OR file_exists(FILES_DIR.DS.basename($file).TEMP_EXT))) {
         unlink($file);
         unset($files[$id]);
     }
@@ -112,7 +111,8 @@ if (isset($_GET['get'])) {
         // Add new file to queue
 
         if (!empty($_POST['name'])) {
-            $name = $_POST['name'];
+            // Make file name file system save
+            $name = str_replace(' '. '_', $_POST['name']);
         } else {
             $parsed = parse_url($_POST['url']);
             $name = basename($parsed['path']);
@@ -198,6 +198,9 @@ if (!empty($files)) {
         <td style="width:60%%"><pre title="%4$s">%3$s</pre></td>
     </tr>
 ';
+    // http://snipplr.com/view/4633/convert-size-in-kb-mb-gb-/
+    $filesizename = array(' Bytes', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB');
+    $filesizedec  = array(0,        1,     2,     3,     3,     3,     3,     3,     3);
 
     foreach ($files as $id=>$file) {
         $a = basename($file);
@@ -205,19 +208,22 @@ if (!empty($files)) {
         unset($log);
         // Replace all carriage returns with new lines
         exec('sed -e "s~\r~\n~g" '.$file.' | grep % | tail -n 1 ', $log);
-        exec('sed -e "s~\r~\n~g" '.$file.' | head', $logHint);
+        exec('sed -e "s~\r~\n~g" '.$file.' | head -n 20', $logHint);
 
         $logHint = implode("\n", $logHint);
 
         if (!isset($log[0])) {
-            $log = 'starting ...';
+            $log = 'Starting ...';
         } else {
             $log = $log[0];
             if (strstr($log, '100%')) {
                 $dl = FILES_DIR.DS.basename($file).TEMP_EXT;
                 if (file_exists($dl)) rename($dl, FILES_DIR.DS.basename($file));
                 $a = sprintf('<a href="'.$_SERVER['DOCUMENT_URI'].'?get=%1$s" title="Download">%2$s</a>', urlencode(basename($file)), basename($file));
-                $log = '';
+                // Show downloaded file size
+                $size = sprintf('%u', filesize(FILES_DIR.DS.basename($file)));
+                $log = $size ? round($size/pow(1024, ($i=floor(log($size, 1024)))), $filesizedec[$i]) . $filesizename[$i] : '0 Bytes';
+                $logHint = '';
                 $enabled = 1;
             }
         }

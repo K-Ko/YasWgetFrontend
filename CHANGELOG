@@ -1,3 +1,13 @@
+ v1.3.0
+========
+- Fix target names with spaces, make them file system save
+- Show file size for finished downloads
+ 
+ v1.2.0
+========
+- Fix .gitignore to work with linked file directories
+- Update structure and layout
+
  v1.1.0
 ========
 - Add favicon.ico

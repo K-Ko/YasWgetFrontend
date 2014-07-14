@@ -112,7 +112,7 @@ if (isset($_GET['get'])) {
 
         if (!empty($_POST['name'])) {
             // Make file name file system save
-            $name = str_replace(' '. '_', $_POST['name']);
+            $name = str_replace(' ', '_', $_POST['name']);
         } else {
             $parsed = parse_url($_POST['url']);
             $name = basename($parsed['path']);

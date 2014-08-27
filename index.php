@@ -207,7 +207,8 @@ if (!empty($files)) {
 
         unset($log);
         // Replace all carriage returns with new lines
-        exec('sed -e "s~\r~\n~g" '.$file.' | grep % | tail -n 1 ', $log);
+        // Files/streams without delivered size have a [  <=>  ] progress bar
+        exec('sed -e "s~\r~\n~g" '.$file.' | grep -e "%\|<=>" | tail -n 1 ', $log);
         exec('sed -e "s~\r~\n~g" '.$file.' | head -n 20', $logHint);
 
         $logHint = implode("\n", $logHint);
@@ -223,6 +224,7 @@ if (!empty($files)) {
                 // Show downloaded file size
                 $size = sprintf('%u', filesize(FILES_DIR.DS.basename($file)));
                 $log = $size ? round($size/pow(1024, ($i=floor(log($size, 1024)))), $filesizedec[$i]) . $filesizename[$i] : '0 Bytes';
+                $log = sprintf('%78s', $log);
                 $logHint = '';
                 $enabled = 1;
             }

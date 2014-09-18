@@ -14,8 +14,8 @@ define('APPVERSION', '1.3.0');
 
 ini_set('display_errors', 0);
 error_reporting(0);
-ini_set('display_errors', 1);
-error_reporting(-1);
+#ini_set('display_errors', 1);
+#error_reporting(-1);
 define('DS', DIRECTORY_SEPARATOR);
 
 /**
@@ -205,10 +205,11 @@ if (!empty($files)) {
     foreach ($files as $id=>$file) {
         $a = basename($file);
 
-        unset($log);
+        unset($log, $saved, $logHint);
         // Replace all carriage returns with new lines
         // Files/streams without delivered size have a [  <=>  ] progress bar
         exec('sed -e "s~\r~\n~g" '.$file.' | grep -e "%\|<=>" | tail -n 1 ', $log);
+        exec('sed -e "s~\r~\n~g" '.$file.' | grep " saved "', $saved);
         exec('sed -e "s~\r~\n~g" '.$file.' | head -n 20', $logHint);
 
         $logHint = implode("\n", $logHint);
@@ -217,7 +218,7 @@ if (!empty($files)) {
             $log = 'Starting ...';
         } else {
             $log = $log[0];
-            if (strstr($log, '100%')) {
+            if (strstr($log, '100%') OR count($saved)) {
                 $dl = FILES_DIR.DS.basename($file).TEMP_EXT;
                 if (file_exists($dl)) rename($dl, FILES_DIR.DS.basename($file));
                 $a = sprintf('<a href="'.$_SERVER['DOCUMENT_URI'].'?get=%1$s" title="Download">%2$s</a>', urlencode(basename($file)), basename($file));

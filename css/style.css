@@ -71,8 +71,17 @@ hr {
   padding-right: 1em
 }
 
+#add {
+  width: 100%;
+}
+
 #add td {
   padding: .5em .5em .5em .75em
+}
+
+#add td.col1 {
+    width: 1%;
+    white-space: nowrap;
 }
 
 tr.odd {

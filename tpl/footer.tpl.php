@@ -26,12 +26,10 @@ $(function() {
         $(el).button('option', 'disabled', !!$(el).data('disable'));
     });
 
-    <?php if (!count($processes)): ?>
-        $('#time, #refresh, #stop').hide();
-    <?php elseif ($_SESSION['refresh']): ?>
-        $('#time, #refresh').hide();
-    <?php else: ?>
-        $('#stop').hide();
+    <?php if ($_SESSION['refresh']): ?>
+        $('#stop').show();
+    <?php elseif (count($processes)): ?>
+        $('#time, #refresh').show();
     <?php endif; ?>
 
 });

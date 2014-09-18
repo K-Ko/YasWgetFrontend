@@ -9,11 +9,11 @@
     </form>
 
     <form method="post" style="float:right;text-align:right">
-        <input id="refresh" type="submit" value="Auto refresh each" style="float:left">
-        <div id="time" style="float:left;margin-top:1px">
+        <input id="refresh" type="submit" value="Auto refresh each" style="float:left;display:none">
+        <div id="time" style="float:left;margin-top:1px;display:none">
             <input type="text" name="refresh" value="<?php echo $_SESSION['refresh'] ?: 60; ?>" style="text-align:right" size="1"> s &nbsp;
         </div>
-        <input id="stop" type="submit" name="off" value="Stop refresh">
+        <input id="stop" type="submit" name="off" value="Stop refresh" style="display:none">
     </form>
 </div>
 

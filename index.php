@@ -111,12 +111,16 @@ if (isset($_GET['get'])) {
         // Add new file to queue
 
         if (!empty($_POST['name'])) {
-            // Make file name file system save
-            $name = str_replace(' ', '_', $_POST['name']);
+            $name = $_POST['name'];
         } else {
             $parsed = parse_url($_POST['url']);
             $name = basename($parsed['path']);
         }
+
+        $name = urldecode($name);
+
+        // Make file name file system save
+        $name = preg_replace('~\s+~', '_', $name);
 
         $file  = escapeshellarg(FILES_DIR.DS.$name);
         $log   = escapeshellarg(LOG_DIR.DS.$name);

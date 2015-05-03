@@ -10,7 +10,7 @@
 
 define('APPNAME',    'Yet another simple Wget Frontend');
 define('APPSHORT',   'YasWF');
-define('APPVERSION', '1.4.0');
+define('APPVERSION', '1.5.0');
 
 ini_set('display_errors', 0);
 error_reporting(0);

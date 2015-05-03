@@ -160,6 +160,15 @@ if (!empty($processes)) {
 
     foreach ($processes as $id=>$process) {
         if (preg_match('~^\s*(\d+).* ([^\s]+)$~', $process, $args)) {
+            $url = $url1 = $args[2];
+            if (strlen($url1) > 100) {
+                $url1 = parse_url($url1);
+                $query = explode('&', $url1['query']);
+                $query = count($query) <= 2
+                       ? $url1['query']
+                       : $query = $query[0].'&...&'.$query[count($query)-1];
+                $url1 = $url1['scheme'].'://'.$url1['host'].$url1['path'].'?'.$query;
+            }
             echo '<tr class="'.($id&1?'odd':'even').'">
                   <td style="width:1%;padding-left:5px">
                       <form method="post" onsubmit="return confirm(\'Stop download.\n\nSure?\')">
@@ -168,7 +177,7 @@ if (!empty($processes)) {
                       </form>
                   </td>
                   <td>
-                       <pre>'.$args[2].'</pre>
+                       <pre title="'.$url.'">'.$url1.'</pre>
                   </td>
                   </tr>';
         }

@@ -26,6 +26,13 @@ $(function() {
         $(el).button('option', 'disabled', !!$(el).data('disable'));
     });
 
+    $(document).tooltip({
+      items: "[data-hint]",
+      content: function() {
+          return '<pre>'+$(this).data('hint')+'</pre>';
+      }
+    });
+  
     <?php if ($_SESSION['refresh']): ?>
         $('#stop').show();
     <?php elseif (count($processes)): ?>

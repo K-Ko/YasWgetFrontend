@@ -14,16 +14,8 @@ define('APPVERSION', '1.5.0');
 
 ini_set('display_errors', 0);
 error_reporting(0);
-#ini_set('display_errors', 1);
-#error_reporting(-1);
-define('DS', DIRECTORY_SEPARATOR);
 
-/**
- * Load settings
- */
-include 'config'.DS.'config.default.php';
-// Custom settings?!
-if (file_exists('config'.DS.'config.php')) include 'config'.DS.'config.local.php';
+define('DS', DIRECTORY_SEPARATOR);
 
 /**
  * Definitions
@@ -43,6 +35,14 @@ is_writable(LOG_DIR)   || mkdir(LOG_DIR,  0700);
 if (!is_writable(FILES_DIR)) {
     die('Can\'t create/write to "'.FILES_DIR.'", please check permissions.');
 }
+
+/**
+ * Load settings
+ */
+require 'config'.DS.'config.default.php';
+// Custom settings?!
+$local = 'config'.DS.'config.local.php';
+if (file_exists($local)) require $local;
 
 session_start();
 
@@ -129,13 +129,12 @@ if (isset($_GET['get'])) {
         $cmd   = $config['wget'].' '.implode(' ', $config['wget_options'])
                . (!empty($_POST['limit']) ? ' --limit-rate='.$_POST['limit'] : '')
                  // Default setting always needed:
-               . ' --background --random-wait --progress=bar:force '
+               . ' --background --random-wait --progress=bar:force:noscroll '
                  // Files and URL
-               . ' -O '.$file.TEMP_EXT.' -o '.$log.' '.$url;
+               . ' -O '.$file.TEMP_EXT.' -a '.$log.' '.$url;
 
-        #echo '<p>Run: '.$cmd.'</p><hr />';
-        #exit;
-        exec($cmd);
+        // Init log file before with command
+        exec('(echo '.escapeshellarg('# '.$cmd).'; echo) >'.$log. '; '.$cmd);
     }
 
     // Always reload page after POST
@@ -208,12 +207,12 @@ if (!empty($files)) {
             </form>
         </td>
         <td><pre>%2$s</pre></td>
-        <td style="width:60%%"><pre title="%4$s">%3$s</pre></td>
+        <td style="width:60%%"><pre data-hint="%4$s">%3$s</pre></td>
     </tr>
 ';
     // http://snipplr.com/view/4633/convert-size-in-kb-mb-gb-/
     $filesizename = array(' Bytes', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB');
-    $filesizedec  = array(0,        1,     2,     3,     3,     3,     3,     3,     3);
+    $filesizedec  = array(       0,     1,     2,     3,     3,     3,     3,     3,     3);
 
     foreach ($files as $id=>$file) {
         $a = basename($file);
@@ -223,14 +222,19 @@ if (!empty($files)) {
         // Files/streams without delivered size have a [  <=>  ] progress bar
         exec('sed -e "s~\r~\n~g" '.$file.' | grep -e "%\|<=>" | tail -n 1 ', $log);
         exec('sed -e "s~\r~\n~g" '.$file.' | grep " saved "', $saved);
-        exec('sed -e "s~\r~\n~g" '.$file.' | head -n 20', $logHint);
+        exec('sed -e "s~\r~\n~g" '.$file, $logHint);
 
-        $logHint = implode("\n", $logHint);
+        ## echo '<pre>',implode("\n", $logHint),'</pre>';
+
+        if (count($logHint) > 30) {
+            array_splice($logHint, 20, count($logHint)-30, '. . .');
+        }
+        $logHint = str_replace('"', '&quot;', implode('<br/>', $logHint));
 
         if (!isset($log[0])) {
-            $log = 'Starting ...';
+            $log = '[ Starting ]';
         } else {
-            $log = $log[0];
+            $log = preg_replace('~^.*?([\d,.]+%\s*)~', '$1 ', $log[0]);
             if (strstr($log, '100%') OR count($saved)) {
                 $dl = FILES_DIR.DS.basename($file).TEMP_EXT;
                 if (file_exists($dl)) rename($dl, FILES_DIR.DS.basename($file));
@@ -239,7 +243,6 @@ if (!empty($files)) {
                 $size = sprintf('%u', filesize(FILES_DIR.DS.basename($file)));
                 $log = $size ? round($size/pow(1024, ($i=floor(log($size, 1024)))), $filesizedec[$i]) . $filesizename[$i] : '0 Bytes';
                 $log = sprintf('%78s', $log);
-                $logHint = '';
                 $enabled = 1;
             }
         }

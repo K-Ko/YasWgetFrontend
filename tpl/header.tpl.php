@@ -2,7 +2,10 @@
 
 <!-- Header -->
 <div id="header">
-    <h1 style="float:left;font-style:italic"><?php echo APPNAME; ?></h1>
+    <h1 style="float:left;font-style:italic">
+        <a href="/" title="Reload page"><img src="favicon.ico" style="width:24px;height:24px"></a>
+        <?php echo APPNAME; ?>
+    </h1>
 
     <form style="float:right;text-align:right">
         <input type="submit" value="Reload page">
@@ -16,6 +19,3 @@
         <input id="stop" type="submit" name="off" value="Stop refresh" style="display:none">
     </form>
 </div>
-
-<div style="clear:both"></div>
-

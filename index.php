@@ -10,12 +10,12 @@
 
 define('APPNAME',    'Yet another simple Wget Frontend');
 define('APPSHORT',   'YasWF');
-define('APPVERSION', '1.5.0');
 
 ini_set('display_errors', 0);
 error_reporting(0);
 
 define('DS', DIRECTORY_SEPARATOR);
+define('APPVERSION', trim(file_get_contents(__DIR__.DS.'.version')));
 
 /**
  * Definitions

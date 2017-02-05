@@ -36,3 +36,11 @@ $config['wget_options'] = array(
     // as ‘Wget/version’, version being the current version number of Wget.
     '--user-agent="Mozilla/5.0 (Windows NT 6.1; rv:24.0) Gecko/20140216 Firefox/24.0"',
 );
+
+/**
+ * Download speed limit default, can be overwritten for each download
+ *
+ * Amount may be expressed in bytes, kilobytes with the k suffix or
+ * megabytes with the m suffix
+ */
+$config['bandwidth'] = '';

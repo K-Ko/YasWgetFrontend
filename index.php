@@ -114,24 +114,24 @@ if (isset($_GET['get'])) {
             $name = $_POST['name'];
         } else {
             $parsed = parse_url($_POST['url']);
-            $name = basename($parsed['path']);
+            $name = basename(preg_replace('~\?.*~', '', $parsed['path']));
         }
 
         $name = urldecode($name);
 
         // Make file name file system save
-        $name = preg_replace('~\s+~', '_', $name);
+        $name = preg_replace('~[\s()]+~', '_', $name);
 
-        $file  = escapeshellarg(FILES_DIR.DS.$name);
-        $log   = escapeshellarg(LOG_DIR.DS.$name);
-        $url   = escapeshellarg($_POST['url']);
+        $file = escapeshellarg(FILES_DIR.DS.$name);
+        $log  = escapeshellarg(LOG_DIR.DS.$name);
+        $url  = escapeshellarg($_POST['url']);
 
-        $cmd   = $config['wget'].' '.implode(' ', $config['wget_options'])
-               . (!empty($_POST['limit']) ? ' --limit-rate='.$_POST['limit'] : '')
-                 // Default setting always needed:
-               . ' --background --random-wait --progress=bar:force:noscroll '
-                 // Files and URL
-               . ' -O '.$file.TEMP_EXT.' -a '.$log.' '.$url;
+        $cmd  = $config['wget'].' '.implode(' ', $config['wget_options'])
+              . (!empty($_POST['limit']) ? ' --limit-rate='.$_POST['limit'] : '')
+              // Default setting always needed:
+              . ' --background --random-wait --progress=bar:force:noscroll '
+              // Files and URL
+              . ' -O '.$file.TEMP_EXT.' -a '.$log.' '.$url;
 
         // Init log file before with command
         exec('(echo '.escapeshellarg('# '.$cmd).'; echo) >'.$log. '; '.$cmd);
